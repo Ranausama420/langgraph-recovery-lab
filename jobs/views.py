@@ -1,4 +1,3 @@
-from django.db import IntegrityError
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -15,8 +14,8 @@ class JobViewSet(viewsets.ModelViewSet):
         if request.headers.get("X-User-Role") != "operator": return Response({"detail":"Only operators can create jobs."}, status=403)
         serializer = JobCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        try: job = serializer.save(tenant_id=request.headers["X-Tenant-Id"])
-        except IntegrityError: job = self.get_queryset().get(idempotency_key=request.data["idempotency_key"])
+        existing = self.get_queryset().filter(idempotency_key=request.data["idempotency_key"]).first()
+        job = existing or serializer.save(tenant_id=request.headers["X-Tenant-Id"])
         run_job(job)
         return Response(JobSerializer(job).data, status=status.HTTP_201_CREATED)
     @action(detail=True, methods=["post"])
