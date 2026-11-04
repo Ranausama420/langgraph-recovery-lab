@@ -22,6 +22,10 @@ The API is available at http://127.0.0.1:8000/api/. Send X-Tenant-Id and X-User-
 
 The dashboard includes tenant-scoped job counts, recent jobs, tool selection, status badges, and idempotent job creation.
 
+## Dashboard preview
+
+![Job Reliability Dashboard](docs/dashboard-screenshot.svg)
+
 ## Reliability model
 
 Jobs, attempts, and workflow events are persisted separately. unstable_email fails once and can be retried, validation always fails and reaches the dead-letter state, and report succeeds. The tenant plus idempotency key prevents duplicate job creation.
