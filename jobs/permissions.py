@@ -1,6 +1,13 @@
 from rest_framework.permissions import BasePermission
+from .context import request_context
 class TenantRolePermission(BasePermission):
     def has_permission(self, request, view):
-        return request.headers.get("X-Tenant-Id") and request.headers.get("X-User-Role") in {"operator","viewer"}
+        tenant, role = request_context(request)
+        if not tenant or role not in {"operator", "viewer"}:
+            return False
+        if request.method in {"POST", "PUT", "PATCH", "DELETE"} and role != "operator":
+            return False
+        return True
     def has_object_permission(self, request, view, obj):
-        return obj.tenant_id == request.headers.get("X-Tenant-Id")
+        tenant, _ = request_context(request)
+        return obj.tenant_id == tenant

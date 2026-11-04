@@ -1,2 +1,3 @@
 from django.urls import include, path
-urlpatterns = [path("api/", include("jobs.urls"))]
+from .health import health
+urlpatterns = [path("api/", include("jobs.urls")), path("health/", health)]

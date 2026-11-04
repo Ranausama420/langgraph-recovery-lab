@@ -13,10 +13,15 @@ class Job(models.Model):
     idempotency_key = models.CharField(max_length=200)
     result = models.JSONField(default=dict, blank=True)
     error = models.TextField(blank=True)
+    next_retry_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     class Meta:
         constraints = [models.UniqueConstraint(fields=["tenant_id","idempotency_key"], name="unique_tenant_idempotency")]
+        indexes = [
+            models.Index(fields=["tenant_id", "status"]),
+            models.Index(fields=["tenant_id", "created_at"]),
+        ]
         ordering = ["-created_at"]
 
 class Attempt(models.Model):
@@ -27,8 +32,16 @@ class Attempt(models.Model):
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True)
 
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["job", "number"], name="unique_job_attempt_number")]
+        ordering = ["number"]
+
 class WorkflowEvent(models.Model):
     job = models.ForeignKey(Job, related_name="events", on_delete=models.CASCADE)
     event = models.CharField(max_length=80)
     payload = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [models.Index(fields=["job", "created_at"])]
+        ordering = ["created_at"]

@@ -19,3 +19,26 @@ class JobCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = ["task","tool","max_attempts","idempotency_key"]
+
+    def validate_task(self, value):
+        value = value.strip()
+        if not value:
+            raise serializers.ValidationError("Task cannot be empty.")
+        return value
+
+    def validate_tool(self, value):
+        value = value.strip()
+        if value not in {"report", "unstable_email", "validation"}:
+            raise serializers.ValidationError("Unsupported tool.")
+        return value
+
+    def validate_max_attempts(self, value):
+        if not 1 <= value <= 10:
+            raise serializers.ValidationError("max_attempts must be between 1 and 10.")
+        return value
+
+    def validate_idempotency_key(self, value):
+        value = value.strip()
+        if not value:
+            raise serializers.ValidationError("idempotency_key cannot be empty.")
+        return value
