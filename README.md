@@ -24,7 +24,15 @@ The dashboard includes tenant-scoped job counts, recent jobs, tool selection, st
 
 ## Dashboard preview
 
-![Job Reliability Dashboard](docs/dashboard-screenshot.svg)
+The PulseOps overview gives operators an at-a-glance view of tenant health, recent workflow runs, and dead-letter work that needs attention.
+
+<p align="center">
+  <img src="docs/pulseops-dashboard.png" alt="PulseOps Job Reliability Dashboard showing four jobs, three completed runs, and one dead-letter job" width="1100" />
+</p>
+
+The seeded workspace shown above contains **4 total jobs**, **3 completed runs**, and **1 dead-letter job**. The live queue also exposes the selected tool, current attempt, and final status for every run.
+
+For a lightweight design preview, see [dashboard-screenshot.svg](docs/dashboard-screenshot.svg).
 
 ## Reliability model
 
